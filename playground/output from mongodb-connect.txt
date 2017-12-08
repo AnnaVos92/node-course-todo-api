@@ -1,0 +1,39 @@
+############ first time running ############
+2017-12-07T15:41:52.680+0100 I NETWORK  [listener] connection accepted from 127.0.0.1:56156 #6 (5 connections now open)
+2017-12-07T15:41:52.704+0100 I STORAGE  [conn6] createCollection: TodoApp.Todos with generated UUID: 68e7865f-cea5-4f3e-90b0-28c7703bb230
+2017-12-07T15:41:52.731+0100 I NETWORK  [conn6] end connection 127.0.0.1:56156 (4 connections now open)
+
+############ command prompt output ############
+Connected to MongoDB server
+[
+  {
+    "text": "something to do",
+    "completed": false,
+    "_id": "5a2956c3e1a3c60d3c1aff42"
+  }
+]
+
+############ mongodb-connect.js ###########
+const MongoClient = require('mongodb').MongoClient;
+
+MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => {
+  if (err) {
+    return console.log('Unable to connect to MongoDB server');
+  };
+  console.log('Connected to MongoDB server');
+
+  // do things
+  db.collection('Todos').insertOne({
+    text: 'something to do',
+    completed: false
+  }, (err, result) => {
+    if (err) {
+      return console.log('Unable to insert todo item', err);
+    };
+
+    console.log(JSON.stringify(result.ops, undefined, 2));
+  });
+
+  // close database
+  db.close();
+});
