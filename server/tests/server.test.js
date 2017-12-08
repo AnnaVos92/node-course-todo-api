@@ -4,9 +4,18 @@ const request = require('supertest');
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
-// testing lifecycle method that lets us run code before test cases start
+const sampleTodos = [{
+    text: 'some text'
+  }, {
+    text: 'some more text'
+}];
+
+// beforeEach: testing lifecycle method that 
+// lets us run code before test cases start
 beforeEach((done) => {
-  Todo.remove({}).then(() => done());   // remove all todos before moving on
+  Todo.remove({}).then(() => {  // remove all todos before moving on
+    return Todo.insertMany(sampleTodos);
+  }).then(() => done());
 });
 
 describe('POST /todos', () => {
@@ -26,7 +35,7 @@ describe('POST /todos', () => {
           return done(err);     // return to break (if err)
         };
 
-        Todo.find().then((todos) => {   // find all todos, then
+        Todo.find({text}).then((todos) => {   // find all todos, then
           expect(todos.length).toBe(1)  // expect number of todos to be 1 (because one todo was added in this test)
           expect(todos[0].text).toBe(text); // expect this todo text to equal the sent todo text
           done();
@@ -45,9 +54,21 @@ describe('POST /todos', () => {
         };
 
         Todo.find().then((todos) => {
-          expect(todos.length).toBe(0);
+          expect(todos.length).toBe(2);
           done();
         }).catch((e) => done(e));
       });
+  });
+});
+
+describe('GET /todos', () => {
+  it('should get all todos', (done) => {
+    request(app)
+      .get('/todos')
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todos.length).toBe(2);
+      })
+      .end(done);
   });
 });
