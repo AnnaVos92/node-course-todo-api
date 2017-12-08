@@ -6,7 +6,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => {
   };
   console.log('Connected to MongoDB server');
 
-  // // toArray returns all documents as array (returns Promise)
+  // toArray returns all documents as array (returns Promise)
   // db.collection('Todos').find({
   //   _id: new ObjectID('5a295afc1afbee2d50856c6b')
   // }).toArray().then((docs) => {
@@ -16,7 +16,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, db) => {
   //   console.log('Couldn\'t find any', error);
   // });
 
-  // // count amount of results from find
+  // count amount of results from find
   // db.collection('Todos').find().count().then((count) => {
   //   console.log('Todos');
   //   console.log(`Count: ${count}`);
