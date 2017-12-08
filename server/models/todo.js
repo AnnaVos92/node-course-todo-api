@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 // model for a todo, mongoose automatically changes 'Todo' to 'todos'
 var Todo = mongoose.model('Todo', {
