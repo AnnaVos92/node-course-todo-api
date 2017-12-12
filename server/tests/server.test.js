@@ -5,6 +5,8 @@ const {ObjectID} = require('mongodb');
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
+process.env.NODE_ENV = 'test';
+
 const todos = [{
     _id: new ObjectID(),
     text: 'some text'
