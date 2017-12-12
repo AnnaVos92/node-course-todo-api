@@ -59,6 +59,30 @@ UserSchema.methods.generateAuthToken = function () {
   });
 };
 
+// statics is like methods, but everything inside it
+// becomes a model method rather than instance method
+UserSchema.statics.findByToken = function (token) {
+  var User = this;
+  var decoded;
+
+  try {
+    decoded = jwt.verify(token, 'secretvalue');
+  } catch(e) {
+    // return new Promise((resolve, reject) => {
+    //   reject();
+    // });
+    // simplified version of above code:
+    return Promise.reject();
+  }
+
+  // query nested object properties, use value in quotes ('tokens.token')
+  return User.findOne({
+    '_id': decoded._id,
+    'tokens.token': token,
+    'tokens.access': 'auth'
+  });
+}
+
 var User = mongoose.model('User', UserSchema);
 
 // ##### SAMPLE #####
