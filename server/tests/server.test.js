@@ -120,7 +120,7 @@ describe('DELETE /todos/:id', () => {
 
         // trying to delete a second time, we expect todo to not exist
         Todo.findById(hexID).then((todo) => {
-          expect(todo).toNotExist();
+          expect(todo).toBeFalsy();
         }).catch((e) => done(e));
       })
       .end(done);
@@ -135,7 +135,7 @@ describe('DELETE /todos/:id', () => {
       .expect(404)
       .expect((res) => {
         Todo.findById(hexID).then((todo) => {
-          expect(todo).toExist();
+          expect(todo).toBeTruthy();
         }).catch((e) => done(e));
       })
       .end(done);
@@ -171,7 +171,8 @@ describe('PATCH /todos/:id', () => {
       .expect((res) => {
         expect(res.body.todo.text).toBe(text);
         expect(res.body.todo.completed).toBe(true);
-        expect(res.body.todo.completedAt).toBeA('number');
+        // expect(res.body.todo.completedAt).toBeA('number');     // old version of expect, deprecated
+        expect(typeof(res.body.todo.completedAt)).toBe('number');
       })
       .end(done)
   });
@@ -240,21 +241,16 @@ describe('POST /users', () => {
       .send({email, password})
       .expect(200)
       .expect((res) => {
-        expect(res.header['x-auth']).toExist(); // use bracket notation instead of dot notation because header has a hyphen in it (header['x-auth'] instead of header.x-auth)
-        expect(res.body._id).toExist();
+        expect(res.header['x-auth']).toBeTruthy(); // use bracket notation instead of dot notation because header has a hyphen in it (header['x-auth'] instead of header.x-auth)
+        expect(res.body._id).toBeTruthy();
         expect(res.body.email).toBe(email);
-      })
-      .end((err) => {
-        if (err) {
-          return done(err);
-        }
 
         User.findOne({email}).then((user) => {
-          expect(user).toExist();
-          expect(user.password).toNotBe(password);
-          done();
+          expect(user).toBeTruthy();
+          expect(user.password).not.toBe(password);
         }).catch((e) => done(e));
-      });
+      })
+      .end(done);
   });
 
   it('should return validation errors if request invalid', (done) => {
@@ -288,9 +284,9 @@ describe('POST /users/login', () => {
       })
       .expect(200)
       .expect((res) => {
-        expect(res.headers['x-auth']).toExist();
+        expect(res.headers['x-auth']).toBeTruthy();
         User.findById(res.body._id).then((user) => {
-          expect(user.tokens[1]).toInclude({
+          expect(user.toObject().tokens[1]).toMatchObject({
             access: 'auth',
             token: res.headers['x-auth']
           });
