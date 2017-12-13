@@ -68,7 +68,7 @@ UserSchema.methods.removeToken = function (token) {
     $pull: {     // $pull removes matching variable from array
       tokens: {token}
     }
-  })
+  });
 };
 
 // statics is like methods, but everything inside it
